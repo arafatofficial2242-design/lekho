@@ -3127,7 +3127,7 @@ function AdminDashboardModal({ isOpen, onClose, supabase }) {
 
     if (fbError) console.log('Feedback error:', fbError.message);
 
-    // রিপোর্ট ফেচ করা (জয়েন বাদ দিয়ে শুধু টেবিলের ডেটা)
+    // রিপোর্ট ফেচ করা (জয়েন বাদ দিয়ে শুধু টেবিলের ডেটা)
     const { data: repData, error } = await supabase
       .from('reports')
       .select('*')
@@ -3205,4 +3205,13 @@ function AdminDashboardModal({ isOpen, onClose, supabase }) {
     </div>
   );
 }
+
+{showAdminModal && (
+  <AdminDashboardModal 
+    isOpen={showAdminModal} 
+    onClose={() => setShowAdminModal(false)} 
+    supabase={supabase} 
+  />
+)}
+
 export default App;
