@@ -1862,6 +1862,7 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
   const [myReaction, setMyReaction] = useState(null)
   const [loadingLike, setLoadingLike] = useState(true)
   const [popEffect, setPopEffect] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const [showReactionPicker, setShowReactionPicker] = useState(false)
   const pressTimer = useRef(null)
@@ -2710,17 +2711,42 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
           </div>
         </div>
       ) : (
-        <p style={{
-          margin: '8px 0 14px',
-          whiteSpace: 'pre-wrap',
-          fontSize: '15px',
-          lineHeight: '1.7',
-          color: colors.text,
-          textAlign: 'left',
-          letterSpacing: '0.1px'
-        }}>
-          {post.content}
-        </p>
+        <div>
+          <p style={{
+            margin: '8px 0 4px',
+            whiteSpace: 'pre-wrap',
+            fontSize: '15px',
+            lineHeight: '1.7',
+            color: colors.text,
+            textAlign: 'left',
+            letterSpacing: '0.1px'
+          }}>
+            {!isExpanded && post.content && post.content.length > 300 
+              ? post.content.slice(0, 300) + '...' 
+              : post.content}
+          </p>
+
+          {post.content && post.content.length > 300 && (
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#0066cc',
+                cursor: 'pointer',
+                fontSize: '13.5px',
+                fontWeight: 'bold',
+                padding: '4px 0 10px',
+                display: 'block',
+                textAlign: 'left'
+              }}
+            >
+              {isExpanded 
+                ? (lang === 'bn' ? 'কম দেখুন (See less)' : 'See less') 
+                : (lang === 'bn' ? '... আরও দেখুন (See more)' : '... See more')}
+            </button>
+          )}
+        </div>
       )}
 
       <div style={{ display: 'flex', gap: '8px', marginTop: '14px', alignItems: 'center', position: 'relative' }}>
