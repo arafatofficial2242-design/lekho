@@ -2089,7 +2089,6 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
     setPopEffect(true)
     setTimeout(() => setPopEffect(false), 300)
 
-    // সুপাবেস থেকে ইউজার রিয়্যাক্ট ক্লিয়ার করে নতুন রিয়্যাক্ট দেওয়া
     await supabase
       .from('likes')
       .delete()
@@ -2119,7 +2118,7 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
 
   const handleLoveButtonClick = () => {
     if (showReactionPicker) return
-    handleReaction(myReaction === 'love' ? 'love' : 'love')
+    handleReaction('love')
   }
 
   const loadComments = async () => {
