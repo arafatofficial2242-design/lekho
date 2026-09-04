@@ -3205,3 +3205,4 @@ function AdminDashboardModal({ isOpen, onClose, supabase }) {
     </div>
   );
 }
+export default App;
