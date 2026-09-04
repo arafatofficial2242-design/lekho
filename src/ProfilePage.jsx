@@ -10,7 +10,7 @@ const CATEGORIES = [
   { id: 'fruit', bn: '🍎 ফলমূল', en: '🍎 Fruits' },
   { id: 'animal', bn: '🦁 প্রাণী', en: '🦁 Animals' },
   { id: 'flower', bn: '🌸 ফুল ও প্রকৃতি', en: '🌸 Flowers' },
-  { id: 'vehicle', bn: '🚗 গাড়ি ও যান', en: '🚗 Vehicles' },
+  { id: 'vehicle', bn: '🚗 গাড়ি ও যান', en: '🚗 Vehicles' },
   { id: 'object', bn: '💎 প্রতীক ও গেজেট', en: '💎 Objects' }
 ]
 
@@ -30,14 +30,14 @@ const AVATAR_LIST = [
   { cat: 'animal', emoji: '🦁', name: 'Lion', bg: '#fef3c7', tags: 'lion singho সিংহ পশু প্রাণী animal king' },
   { cat: 'animal', emoji: '🐯', name: 'Tiger', bg: '#ffedd5', tags: 'tiger bagh বাঘ প্রাণী animal royal' },
   { cat: 'animal', emoji: '🐼', name: 'Panda', bg: '#e2e8f0', tags: 'panda পান্ডা প্রাণী animal cute' },
-  { cat: 'animal', emoji: '🦊', name: 'Fox', bg: '#ffedd5', tags: 'fox shial শিয়াল প্রাণী animal' },
-  { cat: 'animal', emoji: '🐺', name: 'Wolf', bg: '#cbd5e1', tags: 'wolf nekde নেকড়ে animal hunter' },
+  { cat: 'animal', emoji: '🦊', name: 'Fox', bg: '#ffedd5', tags: 'fox shial শিয়াল প্রাণী animal' },
+  { cat: 'animal', emoji: '🐺', name: 'Wolf', bg: '#cbd5e1', tags: 'wolf nekde নেকড়ে animal hunter' },
   { cat: 'animal', emoji: '🐶', name: 'Dog', bg: '#fef3c7', tags: 'dog কুকুর puppy pet animal পোষা' },
-  { cat: 'animal', emoji: '🐱', name: 'Cat', bg: '#ffedd5', tags: 'cat বিড়াল kitten pet animal বিড়াল' },
+  { cat: 'animal', emoji: '🐱', name: 'Cat', bg: '#ffedd5', tags: 'cat বিড়াল kitten pet animal বিড়াল' },
   { cat: 'animal', emoji: '🐰', name: 'Rabbit', bg: '#fce7f3', tags: 'rabbit khorgosh খরগোশ pet animal' },
   { cat: 'animal', emoji: '🦅', name: 'Eagle', bg: '#e2e8f0', tags: 'eagle pakhi ঈগল পাখি bird শিকারি' },
   { cat: 'animal', emoji: '🐬', name: 'Dolphin', bg: '#e0f2fe', tags: 'dolphin ডলফিন মাছ fish sea নদী সাগর' },
-  { cat: 'animal', emoji: '🦄', name: 'Unicorn', bg: '#fae8ff', tags: 'unicorn ইউনিকর্ন magic ঘোড়া' },
+  { cat: 'animal', emoji: '🦄', name: 'Unicorn', bg: '#fae8ff', tags: 'unicorn ইউনিকর্ন magic ঘোড়া' },
   { cat: 'animal', emoji: '🦉', name: 'Owl', bg: '#f1f5f9', tags: 'owl pecha পেঁচা bird পাখি রাত' },
   { cat: 'flower', emoji: '🌸', name: 'Cherry Blossom', bg: '#ffe4e6', tags: 'flower cherry blossom ফুল pink গোলাপি' },
   { cat: 'flower', emoji: '🌺', name: 'Hibiscus', bg: '#fce7f3', tags: 'flower joba জবা ফুল red' },
@@ -51,14 +51,14 @@ const AVATAR_LIST = [
   { cat: 'flower', emoji: '☀️', name: 'Sun', bg: '#fef08a', tags: 'sun shurjo সূর্য দিন day আলো' },
   { cat: 'flower', emoji: '🌈', name: 'Rainbow', bg: '#e0f2fe', tags: 'rainbow rongdhonu রংধনু আকাশ মেঘ' },
   { cat: 'flower', emoji: '🔥', name: 'Fire', bg: '#ffedd5', tags: 'fire agun আগুন flame hot শিখা' },
-  { cat: 'vehicle', emoji: '🏎️', name: 'Race Car', bg: '#fee2e2', tags: 'race car sports car গাড়ি রেস স্পোর্টস রেসিং' },
-  { cat: 'vehicle', emoji: '🚗', name: 'Car', bg: '#ffedd5', tags: 'car red car গাড়ি red লাল গাড়ি' },
-  { cat: 'vehicle', emoji: '🚀', name: 'Rocket', bg: '#ede9fe', tags: 'rocket রকেট space মহাকাশ দ্রুত' },
-  { cat: 'vehicle', emoji: '✈️', name: 'Airplane', bg: '#e0f2fe', tags: 'plane airplane বিমান উড়োজাহাজ আকাশ fly' },
-  { cat: 'vehicle', emoji: '🚁', name: 'Helicopter', bg: '#fef3c7', tags: 'helicopter হেলিকপ্টার উড়া' },
+  { cat: 'vehicle', emoji: '🏎️', name: 'Race Car', bg: '#fee2e2', tags: 'race car sports car গাড়ি রেস স্পোর্টস রেসিং' },
+  { cat: 'vehicle', emoji: '🚗', name: 'Car', bg: '#ffedd5', tags: 'car red car গাড়ি red লাল গাড়ি' },
+  { cat: 'vehicle', emoji: '🚀', name: 'Rocket', bg: '#ede9fe', tags: 'rocket رকেট space মহাকাশ দ্রুত' },
+  { cat: 'vehicle', emoji: '✈️', name: 'Airplane', bg: '#e0f2fe', tags: 'plane airplane বিমান উড়োজাহাজ আকাশ fly' },
+  { cat: 'vehicle', emoji: '🚁', name: 'Helicopter', bg: '#fef3c7', tags: 'helicopter হেলিকপ্টার উড়া' },
   { cat: 'vehicle', emoji: '🏍️', name: 'Motorcycle', bg: '#f1f5f9', tags: 'bike motorcycle বাইক মোটরসাইকেল বাইকার' },
   { cat: 'vehicle', emoji: '⛵', name: 'Sailboat', bg: '#e0f2fe', tags: 'boat ship নৌকা জাহাজ নদী সাগর পালতোলা' },
-  { cat: 'vehicle', emoji: '🚂', name: 'Train', bg: '#e2e8f0', tags: 'train rail ট্রেন রেল গাড়ি রেলপথ' },
+  { cat: 'vehicle', emoji: '🚂', name: 'Train', bg: '#e2e8f0', tags: 'train rail ট্রেন রেল গাড়ি রেলপথ' },
   { cat: 'vehicle', emoji: '🛸', name: 'UFO', bg: '#312e81', tags: 'ufo ইউএফও alien space মহাকাশযান' },
   { cat: 'object', emoji: '👑', name: 'Crown', bg: '#fef08a', tags: 'crown mukut মুকুট king রাজা queen রানি' },
   { cat: 'object', emoji: '💎', name: 'Diamond', bg: '#e0f2fe', tags: 'diamond hira হীরা gem precious রত্ন' },
@@ -67,7 +67,7 @@ const AVATAR_LIST = [
   { cat: 'object', emoji: '⚽', name: 'Football', bg: '#f1f5f9', tags: 'football soccer বল ফুটবল খেলা sport' },
   { cat: 'object', emoji: '🎸', name: 'Guitar', bg: '#fed7aa', tags: 'guitar গিটার গান music সুর' },
   { cat: 'object', emoji: '🪐', name: 'Planet', bg: '#f3e8ff', tags: 'planet shoni শনি গ্রহ space মহাবিশ্ব' },
-  { cat: 'object', emoji: '🏆', name: 'Trophy', bg: '#fef08a', tags: 'trophy ট্রফি পুরস্কার win জয়' },
+  { cat: 'object', emoji: '🏆', name: 'Trophy', bg: '#fef08a', tags: 'trophy ট্রফি পুরস্কার win জয়' },
   { cat: 'object', emoji: '🛡️', name: 'Shield', bg: '#e2e8f0', tags: 'shield dhal ঢাল armor সুরক্ষা' },
   { cat: 'object', emoji: '🔮', name: 'Crystal Ball', bg: '#fae8ff', tags: 'magic crystal ball জাদু ম্যাজিক' }
 ]
@@ -107,10 +107,12 @@ export default function ProfilePage({ session, lang, theme, targetUserId, PostCa
   const [isFollowing, setIsFollowing] = useState(false)
 
   useEffect(() => {
-    loadProfile()
-    loadUserPosts()
-    loadFollowData()
-  }, [profileId])
+    if (profileId) {
+      loadProfile()
+      loadUserPosts()
+      loadFollowData()
+    }
+  }, [profileId, currentUserId])
 
   const loadProfile = async () => {
     setLoading(true)
@@ -140,11 +142,13 @@ export default function ProfilePage({ session, lang, theme, targetUserId, PostCa
   }
 
   const loadFollowData = async () => {
+    // ফলোয়ার্স কাউন্ট
     const { count: followers } = await supabase
       .from('follows')
       .select('*', { count: 'exact', head: true })
       .eq('following_id', profileId)
 
+    // ফলোয়িং কাউন্ট
     const { count: following } = await supabase
       .from('follows')
       .select('*', { count: 'exact', head: true })
@@ -153,7 +157,8 @@ export default function ProfilePage({ session, lang, theme, targetUserId, PostCa
     setFollowersCount(followers || 0)
     setFollowingCount(following || 0)
 
-    if (!isOwner && currentUserId) {
+    // চেক করা বর্তমান ইউজার এই প্রোফাইলকে ফলো করে কি না
+    if (currentUserId && profileId && currentUserId !== profileId) {
       const { data } = await supabase
         .from('follows')
         .select('id')
@@ -162,6 +167,8 @@ export default function ProfilePage({ session, lang, theme, targetUserId, PostCa
         .maybeSingle()
 
       setIsFollowing(!!data)
+    } else {
+      setIsFollowing(false)
     }
   }
 
@@ -169,15 +176,20 @@ export default function ProfilePage({ session, lang, theme, targetUserId, PostCa
     if (!currentUserId || isOwner) return
 
     if (isFollowing) {
+      // আনফলো লজিক
+      setIsFollowing(false)
+      setFollowersCount(c => Math.max(0, c - 1))
+
       await supabase
         .from('follows')
         .delete()
         .eq('follower_id', currentUserId)
         .eq('following_id', profileId)
-
-      setIsFollowing(false)
-      setFollowersCount(c => Math.max(0, c - 1))
     } else {
+      // ফলো লজিক
+      setIsFollowing(true)
+      setFollowersCount(c => c + 1)
+
       await supabase
         .from('follows')
         .insert({ follower_id: currentUserId, following_id: profileId })
@@ -187,10 +199,9 @@ export default function ProfilePage({ session, lang, theme, targetUserId, PostCa
         actor_id: currentUserId,
         type: 'follow'
       })
-
-      setIsFollowing(true)
-      setFollowersCount(c => c + 1)
     }
+    // সার্ভার থেকে সঠিক ডাটা রি-সিঙ্ক করার জন্য
+    loadFollowData()
   }
 
   const handleUpdateAvatar = async (newUrl) => {
@@ -390,7 +401,7 @@ export default function ProfilePage({ session, lang, theme, targetUserId, PostCa
                     cursor: 'pointer'
                   }}
                 >
-                  {isFollowing ? (lang === 'bn' ? 'ফলোয়িং ✓' : 'Following ✓') : (lang === 'bn' ? '+ ফলো করুন' : '+ Follow')}
+                  {isFollowing ? (lang === 'bn' ? 'ফলোয়িং ✓' : 'Following ✓') : (lang === 'bn' ? '+ ফলো করুন' : '+ Follow')}
                 </button>
               )}
             </div>
@@ -439,12 +450,12 @@ export default function ProfilePage({ session, lang, theme, targetUserId, PostCa
 
             <div style={{ marginBottom: '14px' }}>
               <label style={{ display: 'block', fontSize: '12px', color: colors.textMuted, marginBottom: '4px' }}>
-                {lang === 'bn' ? 'বায়ো / নিজের সম্পর্কে (Bio):' : 'Bio (About you):'}
+                {lang === 'bn' ? 'বায়ো / নিজের সম্পর্কে (Bio):' : 'Bio (About you):'}
               </label>
               <textarea
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                placeholder={lang === 'bn' ? 'মনের কথা, ভাবাদর্শ বা নিজের ছোট্ট পরিচয় লিখুন...' : 'Write something about yourself...'}
+                placeholder={lang === 'bn' ? 'মনের কথা, ভাবাদর্শ বা নিজের ছোট্ট পরিচয় লিখুন...' : 'Write something about yourself...'}
                 rows={3}
                 style={{ width: '100%', padding: '8px', background: colors.inputBg, color: colors.text, border: `1px solid ${colors.inputBorder}`, borderRadius: '6px', boxSizing: 'border-box', fontSize: '13px', fontFamily: 'inherit' }}
               />
@@ -494,7 +505,7 @@ export default function ProfilePage({ session, lang, theme, targetUserId, PostCa
                 type="text"
                 value={avatarSearch}
                 onChange={(e) => setAvatarSearch(e.target.value)}
-                placeholder={lang === 'bn' ? '🔍 খুঁজুন (যেমন: বাঘ, গাড়ি, আম, সিংহ, ফুল)...' : '🔍 Search (e.g. lion, car, mango, rose)...'}
+                placeholder={lang === 'bn' ? '🔍 খুঁজুন (যেমন: বাঘ, গাড়ি, আম, সিংহ, ফুল)...' : '🔍 Search (e.g. lion, car, mango, rose)...'}
                 style={{
                   width: '100%',
                   padding: '8px 34px 8px 12px',
@@ -549,7 +560,7 @@ export default function ProfilePage({ session, lang, theme, targetUserId, PostCa
             }}>
               {filteredAvatars.length === 0 ? (
                 <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: colors.textMuted, padding: '30px 0', fontSize: '13px' }}>
-                  {lang === 'bn' ? 'কোনো অবতার পাওয়া যায়নি।' : 'No avatar found.'}
+                  {lang === 'bn' ? 'কোনো অবতার পাওয়া যায়নি।' : 'No avatar found.'}
                 </div>
               ) : (
                 filteredAvatars.map((item, idx) => {
@@ -588,7 +599,7 @@ export default function ProfilePage({ session, lang, theme, targetUserId, PostCa
 
             <div style={{ borderTop: `1px solid ${colors.cardBorder}`, paddingTop: '10px', textAlign: 'center' }}>
               <span style={{ fontSize: '11px', color: colors.textMuted }}>
-                {lang === 'bn' ? 'যেকোনো অবতারে ক্লিক করলেই প্রোফাইলে সেভ হয়ে যাবে' : 'Click any avatar to apply to your profile'}
+                {lang === 'bn' ? 'যেকোনো অবতারে ক্লিক করলেই প্রোফাইলে সেভ হয়ে যাবে' : 'Click any avatar to apply to your profile'}
               </span>
             </div>
 
@@ -604,7 +615,7 @@ export default function ProfilePage({ session, lang, theme, targetUserId, PostCa
 
         {userPosts.length === 0 ? (
           <p style={{ color: colors.textMuted, fontSize: '13px' }}>
-            {lang === 'bn' ? 'এখনো কোনো পোস্ট করা হয়নি।' : 'No posts yet.'}
+            {lang === 'bn' ? 'এখনো কোনো পোস্ট করা হয়নি।' : 'No posts yet.'}
           </p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
