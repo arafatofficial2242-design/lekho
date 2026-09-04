@@ -374,98 +374,7 @@ function NewPostForm({ session, lang, colors, isDark, onPostCreated, showToast }
   )
 }
 
-function AdminDashboardModal({ isOpen, onClose, supabase }) {
-  const [activeTab, setActiveTab] = useState('reports');
-  const [reports, setReports] = useState([]);
-  const [feedbacks, setFeedbacks] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const loadData = async (showLoading = false) => {
-    if (showLoading) setLoading(true);
-
-    const { data: fbData, error: fbError } = await supabase
-      .from('feedbacks')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (fbError) console.log('Feedback error:', fbError.message);
-
-    const { data: repData, error } = await supabase
-      .from('reports')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    setFeedbacks(fbData || []);
-    setReports(repData || []);
-    if (showLoading) setLoading(false);
-  };
-
-  useEffect(() => {
-    if (isOpen) {
-      loadData(true);
-    }
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="modal-overlay">
-      <div className="admin-modal-content">
-        <div className="admin-header">
-          <h2>🛠️ Admin Dashboard</h2>
-          <button className="close-btn" onClick={onClose}>×</button>
-        </div>
-
-        <div className="admin-tabs">
-          <button 
-            className={`tab-btn ${activeTab === 'reports' ? 'active' : ''}`}
-            onClick={() => setActiveTab('reports')}
-          >
-            🚨 Reported Posts ({reports.length})
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'feedbacks' ? 'active' : ''}`}
-            onClick={() => setActiveTab('feedbacks')}
-          >
-            💬 User Feedbacks ({feedbacks.length})
-          </button>
-        </div>
-
-        <div className="admin-body">
-          {loading ? (
-            <p className="loading-text">লোড হচ্ছে...</p>
-          ) : activeTab === 'reports' ? (
-            reports.length === 0 ? (
-              <p className="no-data">কোনো পোস্টের বিরুদ্ধে রিপোর্ট নেই।</p>
-            ) : (
-              reports.map((report) => (
-                <div key={report.id} className="admin-item-card">
-                  <p><strong>কারণ:</strong> {report.reason}</p>
-                  <p><strong>পোস্ট আইডি:</strong> {report.post_id}</p>
-                  <small>{new Date(report.created_at).toLocaleString()}</small>
-                </div>
-              ))
-            )
-          ) : (
-            feedbacks.length === 0 ? (
-              <p className="no-data">কোনো ফিডব্যাক নেই।</p>
-            ) : (
-              feedbacks.map((fb) => (
-                <div key={fb.id} className="admin-item-card">
-                  <p><strong>ধরণ:</strong> {fb.type}</p>
-                  <p>{fb.message || fb.content || JSON.stringify(fb)}</p>
-                  <small>{new Date(fb.created_at).toLocaleString()}</small>
-                </div>
-              ))
-            )
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default function App() {
+function App() {
   const [session, setSession] = useState(null)
   const [lang, setLang] = useState(localStorage.getItem('lekho_lang') || 'bn')
   
@@ -477,7 +386,7 @@ export default function App() {
   })
 
   const [loading, setLoading] = useState(true)
-  const [view, setView] = useState('feed')
+  const [view, setView] = useState('feed') // 'feed', 'profile', 'saved', 'notifications'
   const [feedTab, setFeedTab] = useState('explore')
   const [viewedUserId, setViewedUserId] = useState(null)
   const [singlePostId, setSinglePostId] = useState(null)
@@ -985,10 +894,10 @@ export default function App() {
             maxWidth: '320px', width: '100%', padding: '20px', boxShadow: '0 8px 30px rgba(0,0,0,0.4)', textAlign: 'center'
           }}>
             <h3 style={{ margin: '0 0 10px', color: colors.text, fontSize: '18px' }}>
-              {lang === 'bn' ? 'আপনি কি সাইট ছেড়ে যেতে চান?' : 'Do you want to leave this site?'}
+              {lang === 'bn' ? 'আপনি কি সাইট ছেড়ে যেতে চান?' : 'Do you want to leave this site?'}
             </h3>
             <p style={{ color: colors.textMuted, fontSize: '13.5px', margin: '0 0 20px' }}>
-              {lang === 'bn' ? 'আপনি লেখো প্ল্যাটফর্ম থেকে বের হয়ে যাচ্ছেন।' : 'You are exiting Lekho platform.'}
+              {lang === 'bn' ? 'আপনি লেখো প্ল্যাটফর্ম থেকে বের হয়ে যাচ্ছেন।' : 'You are exiting Lekho platform.'}
             </p>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
               <button
@@ -1308,6 +1217,7 @@ export default function App() {
                   📑 {lang === 'bn' ? 'সেভড' : 'Saved'}
                 </button>
 
+                {/* ফুল-পেজ নোটিফিকেশন ট্যাব খোলার বাটন */}
                 <button
                   onClick={handleOpenNotifications}
                   style={{
@@ -1627,9 +1537,18 @@ export default function App() {
 
       {showAdminModal && isAdmin && (
         <AdminDashboardModal
-          isOpen={showAdminModal}
+          lang={lang}
+          colors={colors}
+          isDark={isDark}
+          showToast={showToast}
           onClose={() => setShowAdminModal(false)}
-          supabase={supabase}
+          onRefreshFeed={() => setRefreshFeed(r => r + 1)}
+          onOpenOriginalPost={(postId) => {
+            setShowAdminModal(false)
+            setSinglePostId(postId)
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+            window.history.pushState({}, '', `?post=${postId}`)
+          }}
         />
       )}
 
@@ -3190,3 +3109,228 @@ function FeedbackModal({ session, lang, colors, showToast, onClose }) {
     </div>
   )
 }
+
+function AdminDashboardModal({ lang, colors, showToast, onClose, onRefreshFeed, onOpenOriginalPost }) {
+  const [tab, setTab] = useState('reports')
+  const [feedbacks, setFeedbacks] = useState([])
+  const [reports, setReports] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadData(true)
+    
+    const interval = setInterval(() => {
+      loadData(false)
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  const loadData = async (showLoading = false) => {
+    if (showLoading) setLoading(true)
+
+    const { data: fbData } = await supabase
+      .from('feedbacks')
+      .select('*, profiles:user_id(name, full_name, avatar_url)')
+      .order('created_at', { ascending: false })
+
+    const { data: repData } = await supabase
+      .from('reports')
+      .select('*, posts(*, profiles(name, full_name, avatar_url)), profiles:reporter_id(name, full_name)')
+      .order('created_at', { ascending: false })
+
+    setFeedbacks(fbData || [])
+    setReports(repData || [])
+    if (showLoading) setLoading(false)
+  }
+
+  const handleToggleFeedback = async (item) => {
+    const nextStatus = item.status === 'resolved' ? 'pending' : 'resolved'
+    await supabase.from('feedbacks').update({ status: nextStatus }).eq('id', item.id)
+    loadData(false)
+  }
+
+  const handleDeleteFeedback = async (id) => {
+    if (!window.confirm('Delete this feedback?')) return
+    await supabase.from('feedbacks').delete().eq('id', id)
+    loadData(false)
+  }
+
+  const handleDeleteReportedPost = async (postId, reportId) => {
+    if (!window.confirm(lang === 'bn' ? 'তুমি কি নিশ্চিত এই আপত্তিকর পোস্টটি সম্পূর্ণ মুছে ফেলতে চাও?' : 'Delete this post?')) return
+
+    await supabase.from('posts').delete().eq('id', postId)
+    await supabase.from('reports').delete().eq('id', reportId)
+    showToast(lang === 'bn' ? '🗑️ পোস্টটি মুছে ফেলা হয়েছে!' : '🗑️ Post deleted successfully!', 'info')
+    loadData(false)
+    onRefreshFeed()
+  }
+
+  const handleDismissReport = async (reportId) => {
+    await supabase.from('reports').update({ status: 'dismissed' }).eq('id', reportId)
+    loadData(false)
+  }
+
+  const handleDeleteReport = async (reportId) => {
+    await supabase.from('reports').delete().eq('id', reportId)
+    loadData(false)
+  }
+
+  return (
+    <div style={{
+      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+      background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      zIndex: 1000, padding: '15px'
+    }}>
+      <div style={{
+        background: colors.cardBg, border: `1px solid ${colors.cardBorder}`, borderRadius: '12px',
+        maxWidth: '580px', width: '100%', maxHeight: '85vh', overflowY: 'auto', padding: '18px',
+        boxShadow: '0 6px 25px rgba(0,0,0,0.5)', textAlign: 'left'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', borderBottom: `1px solid ${colors.cardBorder}`, paddingBottom: '8px' }}>
+          <h3 style={{ margin: 0, fontSize: '18px', color: colors.text }}>
+            🛠️ {lang === 'bn' ? 'অ্যাডমিন ড্যাশবোর্ড' : 'Admin Dashboard'}
+          </h3>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: colors.textMuted, fontSize: '18px', cursor: 'pointer' }}>✕</button>
+        </div>
+
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
+          <button
+            onClick={() => setTab('reports')}
+            style={{
+              flex: 1, padding: '8px', borderRadius: '6px', border: 'none',
+              background: tab === 'reports' ? '#ff4d4f' : '#374151',
+              color: '#fff',
+              fontWeight: 'bold', cursor: 'pointer', fontSize: '13px'
+            }}
+          >
+            🚨 {lang === 'bn' ? 'রিপোর্টকৃত পোস্ট' : 'Reported Posts'} ({reports.filter(r => r.status === 'pending').length})
+          </button>
+          <button
+            onClick={() => setTab('feedbacks')}
+            style={{
+              flex: 1, padding: '8px', borderRadius: '6px', border: 'none',
+              background: tab === 'feedbacks' ? '#0066cc' : '#374151',
+              color: '#fff',
+              fontWeight: 'bold', cursor: 'pointer', fontSize: '13px'
+            }}
+          >
+            💬 {lang === 'bn' ? 'ইউজার ফিডব্যাক' : 'User Feedbacks'} ({feedbacks.length})
+          </button>
+        </div>
+
+        {loading ? (
+          <p style={{ textAlign: 'center', color: colors.textMuted }}>Loading...</p>
+        ) : tab === 'reports' ? (
+          reports.length === 0 ? (
+            <p style={{ textAlign: 'center', color: colors.textMuted, margin: '30px 0' }}>কোনো পোস্টের বিরুদ্ধে রিপোর্ট নেই।</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {reports.map(r => (
+                <div key={r.id} style={{
+                  background: colors.inputBg, border: `1px solid ${colors.cardBorder}`,
+                  borderRadius: '8px', padding: '12px', opacity: r.status === 'dismissed' ? 0.6 : 1, textAlign: 'left'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '12px' }}>
+                    <span style={{ color: '#ff4d4f', fontWeight: 'bold' }}>⚠️ কারণ: {r.reason}</span>
+                    <span style={{ color: colors.textMuted }}>{formatDateTime(r.created_at, lang)}</span>
+                  </div>
+
+                  {r.posts ? (
+                    <div 
+                      onClick={() => {
+                        if (r.posts.id && onOpenOriginalPost) {
+                          onOpenOriginalPost(r.posts.id)
+                        }
+                      }}
+                      style={{ 
+                        background: colors.cardBg, 
+                        padding: '8px 10px', 
+                        borderRadius: '6px', 
+                        border: `1px solid ${colors.cardBorder}`, 
+                        margin: '6px 0', 
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        transition: 'background 0.15s ease'
+                      }}
+                      title={lang === 'bn' ? 'পোস্টে যেতে ক্লিক করুন' : 'Click to view post'}
+                    >
+                      <div style={{ fontSize: '12px', color: '#0066cc', fontWeight: 'bold', marginBottom: '3px' }}>
+                        লেখক: @{r.posts.profiles?.full_name || r.posts.profiles?.name || 'Unknown'}
+                        <span style={{ float: 'right', fontSize: '11px', color: colors.textMuted }}>{lang === 'bn' ? 'পোস্ট দেখুন ↗' : 'View post ↗'}</span>
+                      </div>
+                      {r.posts.title && <div style={{ fontSize: '13px', fontWeight: 'bold', color: colors.text }}>{r.posts.title}</div>}
+                      <div style={{ fontSize: '13px', color: colors.text, marginTop: '2px', whiteSpace: 'pre-wrap' }}>
+                        {r.posts.content}
+                      </div>
+                    </div>
+                  ) : (
+                    <p style={{ fontSize: '12px', color: colors.textMuted, fontStyle: 'italic', margin: '4px 0' }}>
+                      [পোস্টটি ইতোমধ্যে মুছে ফেলা হয়েছে]
+                    </p>
+                  )}
+
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '8px' }}>
+                    {r.posts && (
+                      <button
+                        onClick={() => handleDeleteReportedPost(r.posts.id, r.id)}
+                        style={{ padding: '4px 10px', fontSize: '11px', background: '#ff4d4f', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+                      >
+                        🗑️ পোস্ট ডিলিট
+                      </button>
+                    )}
+                    {r.status === 'pending' && (
+                      <button
+                        onClick={() => handleDismissReport(r.id)}
+                        style={{ padding: '4px 10px', fontSize: '11px', background: '#6b7280', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                      >
+                        ✓ খারিজ (Dismiss)
+                      </button>
+                    )}
+                    <button
+                      onClick={() => handleDeleteReport(r.id)}
+                      style={{ padding: '4px 8px', fontSize: '11px', background: 'none', border: `1px solid ${colors.cardBorder}`, color: colors.textMuted, borderRadius: '4px', cursor: 'pointer' }}
+                    >
+                      ✕ মুছুন
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )
+        ) : (
+          feedbacks.length === 0 ? (
+            <p style={{ textAlign: 'center', color: colors.textMuted, margin: '30px 0' }}>কোনো ফিডব্যাক নেই।</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {feedbacks.map(f => (
+                <div key={f.id} style={{
+                  background: colors.inputBg, border: `1px solid ${colors.cardBorder}`,
+                  borderRadius: '8px', padding: '12px', opacity: f.status === 'resolved' ? 0.65 : 1, textAlign: 'left'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                    <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '10px', background: f.type === 'bug' ? '#ff4d4f' : '#0066cc', color: '#fff' }}>
+                      {f.type}
+                    </span>
+                    <span style={{ fontSize: '11px', color: colors.textMuted }}>{formatDateTime(f.created_at, lang)}</span>
+                  </div>
+                  <p style={{ margin: '6px 0', fontSize: '13.5px', color: colors.text }}>{f.message}</p>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                    <button onClick={() => handleToggleFeedback(f)} style={{ padding: '3px 8px', fontSize: '11px', background: f.status === 'resolved' ? '#faad14' : '#52c41a', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                      {f.status === 'resolved' ? 'Pending' : '✓ Resolve'}
+                    </button>
+                    <button onClick={() => handleDeleteFeedback(f.id)} style={{ padding: '3px 8px', fontSize: '11px', background: '#ff4d4f', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default App
