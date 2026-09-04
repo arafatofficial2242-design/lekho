@@ -3127,10 +3127,10 @@ function AdminDashboardModal({ isOpen, onClose, supabase }) {
 
     if (fbError) console.log('Feedback error:', fbError.message);
 
-    // রিপোর্ট ফেচ করা এবং কনসোলে চেক করা
+    // রিপোর্ট ফেচ করা (জয়েন বাদ দিয়ে শুধু টেবিলের ডেটা)
     const { data: repData, error } = await supabase
       .from('reports')
-      .select('*, posts(*)')
+      .select('*')
       .order('created_at', { ascending: false });
 
     console.log("Reports Data:", repData);
@@ -3183,11 +3183,7 @@ function AdminDashboardModal({ isOpen, onClose, supabase }) {
                 <div key={report.id} className="admin-item-card">
                   <p><strong>কারণ:</strong> {report.reason}</p>
                   <p><strong>পোস্ট আইডি:</strong> {report.post_id}</p>
-                  {report.posts && (
-                    <div className="reported-post-snippet">
-                      <p>{report.posts.content?.substring(0, 100)}...</p>
-                    </div>
-                  )}
+                  <small>{new Date(report.created_at).toLocaleString()}</small>
                 </div>
               ))
             )
@@ -3197,6 +3193,7 @@ function AdminDashboardModal({ isOpen, onClose, supabase }) {
             ) : (
               feedbacks.map((fb) => (
                 <div key={fb.id} className="admin-item-card">
+                  <p><strong>ধরণ:</strong> {fb.type}</p>
                   <p>{fb.message || fb.content || JSON.stringify(fb)}</p>
                   <small>{new Date(fb.created_at).toLocaleString()}</small>
                 </div>
