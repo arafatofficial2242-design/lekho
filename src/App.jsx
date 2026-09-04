@@ -1860,7 +1860,7 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
   const [insightfulCount, setInsightfulCount] = useState(0)
   const [unlikeCount, setUnlikeCount] = useState(0)
   const [myReaction, setMyReaction] = useState(null)
-  const [loadingLike, setLoadingLike] = useState(true)
+  const [loadingLike, setLoadingLike] = useState(false)
   const [popEffect, setPopEffect] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -1916,7 +1916,7 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
     }
   }, [])
 
-  const isOwner = session.user.id === post.author_id
+  const isOwner = session?.user?.id === post.author_id
 
   const isRepost = post.content && post.content.includes('--- Original Post ---')
   let repostCaptionText = ''
@@ -1940,11 +1940,13 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
   }
 
   useEffect(() => {
-    loadReactions()
-    loadComments()
-    loadBookmarkStatus()
-    recordView()
-  }, [post.id])
+    if (post?.id && session?.user?.id) {
+      loadReactions()
+      loadComments()
+      loadBookmarkStatus()
+      recordView()
+    }
+  }, [post.id, session?.user?.id])
 
   const loadBookmarkStatus = async () => {
     const { data } = await supabase
@@ -2019,7 +2021,7 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
 
     if (!error) {
       showToast(lang === 'bn' ? '🚀 আপনার টাইমলাইনে পোস্টটি শেয়ার করা হয়েছে!' : '🚀 Post shared to your timeline!', 'success')
-      onChanged()
+      if (onChanged) onChanged()
     } else {
       showToast('Error: ' + error.message, 'error')
     }
@@ -2078,7 +2080,6 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
       .maybeSingle()
 
     setMyReaction(data ? data.type : null)
-    setLoadingLike(false)
   }
 
   const handleReaction = async (type) => {
@@ -2088,44 +2089,40 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
     setPopEffect(true)
     setTimeout(() => setPopEffect(false), 300)
 
+    // অপ্টিমিস্টিক লোকাল আপডেট
     if (prevReaction === type) {
+      setMyReaction(null)
+      if (type === 'love') setLoveCount(c => Math.max(0, c - 1))
+      else if (type === 'insightful') setInsightfulCount(c => Math.max(0, c - 1))
+      else setUnlikeCount(c => Math.max(0, c - 1))
+
+      await supabase
+        .from('likes')
+        .delete()
+        .eq('post_id', post.id)
+        .eq('user_id', session.user.id)
+    } else {
+      if (prevReaction === 'love') setLoveCount(c => Math.max(0, c - 1))
+      if (prevReaction === 'insightful') setInsightfulCount(c => Math.max(0, c - 1))
+      if (prevReaction === 'unlike') setUnlikeCount(c => Math.max(0, c - 1))
+
+      if (type === 'love') setLoveCount(c => c + 1)
+      if (type === 'insightful') setInsightfulCount(c => c + 1)
+      if (type === 'unlike') setUnlikeCount(c => c + 1)
+
+      setMyReaction(type)
+
       await supabase
         .from('likes')
         .delete()
         .eq('post_id', post.id)
         .eq('user_id', session.user.id)
 
-      setMyReaction(null)
-      if (type === 'love') setLoveCount(c => c - 1)
-      else if (type === 'insightful') setInsightfulCount(c => c - 1)
-      else setUnlikeCount(c => c - 1)
-
-    } else if (prevReaction === null) {
       await supabase
         .from('likes')
         .insert({ post_id: post.id, user_id: session.user.id, type })
-
-      setMyReaction(type)
-      if (type === 'love') setLoveCount(c => c + 1)
-      else if (type === 'insightful') setInsightfulCount(c => c + 1)
-      else setUnlikeCount(c => c + 1)
-
-    } else {
-      await supabase
-        .from('likes')
-        .update({ type })
-        .eq('post_id', post.id)
-        .eq('user_id', session.user.id)
-
-      setMyReaction(type)
-      if (prevReaction === 'love') setLoveCount(c => c - 1)
-      if (prevReaction === 'insightful') setInsightfulCount(c => c - 1)
-      if (prevReaction === 'unlike') setUnlikeCount(c => c - 1)
-
-      if (type === 'love') setLoveCount(c => c + 1)
-      if (type === 'insightful') setInsightfulCount(c => c + 1)
-      if (type === 'unlike') setUnlikeCount(c => c + 1)
     }
+    loadReactions()
   }
 
   const startPressTimer = () => {
@@ -2140,7 +2137,7 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
 
   const handleLoveButtonClick = () => {
     if (showReactionPicker) return
-    handleReaction('love')
+    handleReaction(myReaction === 'love' ? 'love' : 'love')
   }
 
   const loadComments = async () => {
@@ -2157,17 +2154,12 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
     e.preventDefault()
     if (!newComment.trim()) return
 
-    if (containsProfanity(newComment)) {
-      showToast(translations[lang].profanityComment, 'error')
-      return
-    }
-
     setPostingComment(true)
 
     const { error } = await supabase.from('comments').insert({
       post_id: post.id,
       user_id: session.user.id,
-      content: newComment,
+      content: newComment.trim(),
       parent_id: null
     })
 
@@ -2176,6 +2168,8 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
     if (!error) {
       setNewComment('')
       loadComments()
+    } else {
+      showToast('Error: ' + error.message, 'error')
     }
   }
 
@@ -2183,17 +2177,12 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
     e.preventDefault()
     if (!replyText.trim()) return
 
-    if (containsProfanity(replyText)) {
-      showToast(translations[lang].profanityComment, 'error')
-      return
-    }
-
     setPostingReply(true)
 
     const { error } = await supabase.from('comments').insert({
       post_id: post.id,
       user_id: session.user.id,
-      content: replyText,
+      content: replyText.trim(),
       parent_id: parentId
     })
 
@@ -2203,6 +2192,8 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
       setReplyText('')
       setReplyingToId(null)
       loadComments()
+    } else {
+      showToast('Error: ' + error.message, 'error')
     }
   }
 
@@ -2222,15 +2213,10 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
     e.preventDefault()
     if (!editingCommentText.trim()) return
 
-    if (containsProfanity(editingCommentText)) {
-      showToast(translations[lang].profanityComment, 'error')
-      return
-    }
-
     setSavingCommentEdit(true)
     const { error } = await supabase
       .from('comments')
-      .update({ content: editingCommentText })
+      .update({ content: editingCommentText.trim() })
       .eq('id', commentId)
 
     setSavingCommentEdit(false)
@@ -2271,11 +2257,6 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
     e.preventDefault()
     if (!editContent.trim()) return
 
-    if (containsProfanity(editContent) || containsProfanity(editTitle)) {
-      showToast(translations[lang].profanityPost, 'error')
-      return
-    }
-
     setSaving(true)
     const { error } = await supabase
       .from('posts')
@@ -2290,7 +2271,7 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
       setEditing(false)
       setShowPostMenu(false)
       showToast(lang === 'bn' ? 'পোস্ট এডিট সম্পন্ন!' : 'Post updated!', 'success')
-      onChanged()
+      if (onChanged) onChanged()
     }
   }
 
@@ -2303,7 +2284,7 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
       showToast('Error: ' + error.message, 'error')
     } else {
       showToast(lang === 'bn' ? 'পোস্ট মুছে ফেলা হয়েছে।' : 'Post deleted.', 'info')
-      onChanged()
+      if (onChanged) onChanged()
     }
   }
 
@@ -2367,7 +2348,7 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
   const rootComments = comments.filter(c => !c.parent_id)
 
   const renderCommentItem = (c, isReply = false) => {
-    const isCommentOwner = session.user.id === c.user_id
+    const isCommentOwner = session?.user?.id === c.user_id
     const canDelete = isCommentOwner || isOwner
     const replies = comments.filter(r => r.parent_id === c.id)
 
@@ -2402,7 +2383,7 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
                   />
                 )}
                 <div style={{ textAlign: 'left' }}>
-                  <strong style={{ fontSize: '13.5px', cursor: 'pointer', color: '#0066cc' }} onClick={() => onViewProfile(c.user_id)}>
+                  <strong style={{ fontSize: '13.5px', cursor: 'pointer', color: '#0066cc' }} onClick={() => onViewProfile && onViewProfile(c.user_id)}>
                     {c.profiles?.full_name || c.profiles?.name || translations[lang].unknownCommenter}:
                   </strong>{' '}
                   <span style={{ fontSize: '13.5px', color: colors.text }}>{c.content}</span>
@@ -2530,7 +2511,7 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
             />
           ) : (
             <div
-              onClick={() => onViewProfile(post.author_id)}
+              onClick={() => onViewProfile && onViewProfile(post.author_id)}
               style={{
                 width: '40px', height: '40px', borderRadius: '50%', background: isDark ? '#23252a' : '#e2e8f0',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px',
@@ -2543,7 +2524,7 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
 
           <div style={{ textAlign: 'left', minWidth: 0, flex: 1 }}>
             <strong
-              onClick={() => onViewProfile(post.author_id)}
+              onClick={() => onViewProfile && onViewProfile(post.author_id)}
               style={{ cursor: 'pointer', color: '#0066cc', fontSize: '15px', display: 'block', fontWeight: '700', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
             >
               {post.profiles?.full_name || post.profiles?.name || translations[lang].unknownAuthor}
