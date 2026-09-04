@@ -894,10 +894,10 @@ function App() {
             maxWidth: '320px', width: '100%', padding: '20px', boxShadow: '0 8px 30px rgba(0,0,0,0.4)', textAlign: 'center'
           }}>
             <h3 style={{ margin: '0 0 10px', color: colors.text, fontSize: '18px' }}>
-              {lang === 'bn' ? 'আপনি কি সাইট ছেড়ে যেতে চান?' : 'Do you want to leave this site?'}
+              {lang === 'bn' ? 'আপনি কি সাইট ছেড়ে যেতে চান?' : 'Do you want to leave this site?'}
             </h3>
             <p style={{ color: colors.textMuted, fontSize: '13.5px', margin: '0 0 20px' }}>
-              {lang === 'bn' ? 'আপনি লেখো প্ল্যাটফর্ম থেকে বের হয়ে যাচ্ছেন।' : 'You are exiting Lekho platform.'}
+              {lang === 'bn' ? 'আপনি লেখো প্ল্যাটফর্ম থেকে বের হয়ে যাচ্ছেন।' : 'You are exiting Lekho platform.'}
             </p>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
               <button
@@ -2089,35 +2089,17 @@ function PostCard({ post, session, lang, colors, isDark, showToast, onChanged, o
     setPopEffect(true)
     setTimeout(() => setPopEffect(false), 300)
 
-    // অপ্টিমিস্টিক লোকাল আপডেট
+    // সুপাবেস থেকে ইউজার রিয়্যাক্ট ক্লিয়ার করে নতুন রিয়্যাক্ট দেওয়া
+    await supabase
+      .from('likes')
+      .delete()
+      .eq('post_id', post.id)
+      .eq('user_id', session.user.id)
+
     if (prevReaction === type) {
       setMyReaction(null)
-      if (type === 'love') setLoveCount(c => Math.max(0, c - 1))
-      else if (type === 'insightful') setInsightfulCount(c => Math.max(0, c - 1))
-      else setUnlikeCount(c => Math.max(0, c - 1))
-
-      await supabase
-        .from('likes')
-        .delete()
-        .eq('post_id', post.id)
-        .eq('user_id', session.user.id)
     } else {
-      if (prevReaction === 'love') setLoveCount(c => Math.max(0, c - 1))
-      if (prevReaction === 'insightful') setInsightfulCount(c => Math.max(0, c - 1))
-      if (prevReaction === 'unlike') setUnlikeCount(c => Math.max(0, c - 1))
-
-      if (type === 'love') setLoveCount(c => c + 1)
-      if (type === 'insightful') setInsightfulCount(c => c + 1)
-      if (type === 'unlike') setUnlikeCount(c => c + 1)
-
       setMyReaction(type)
-
-      await supabase
-        .from('likes')
-        .delete()
-        .eq('post_id', post.id)
-        .eq('user_id', session.user.id)
-
       await supabase
         .from('likes')
         .insert({ post_id: post.id, user_id: session.user.id, type })
